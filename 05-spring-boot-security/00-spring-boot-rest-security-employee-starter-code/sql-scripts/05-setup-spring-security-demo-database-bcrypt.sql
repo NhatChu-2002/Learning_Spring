@@ -1,4 +1,4 @@
-USE `employee_directory`;
+usersUSE `employee_directory`;
 
 DROP TABLE IF EXISTS `authorities`;
 DROP TABLE IF EXISTS `users`;
