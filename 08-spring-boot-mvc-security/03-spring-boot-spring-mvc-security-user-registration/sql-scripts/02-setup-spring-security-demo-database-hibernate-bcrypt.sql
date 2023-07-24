@@ -84,7 +84,7 @@ CREATE TABLE `users_roles` (
   ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-SET FOREIGN_KEY_CHECKS = 1;
+SET FOREIGN_KEY_CHECKS = 1;roles
 
 --
 -- Dumping data for table `users_roles`
