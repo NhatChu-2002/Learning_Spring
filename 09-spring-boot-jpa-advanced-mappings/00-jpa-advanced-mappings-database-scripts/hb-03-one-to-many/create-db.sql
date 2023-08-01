@@ -31,7 +31,7 @@ CREATE TABLE `instructor` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `course`;
-
+course
 CREATE TABLE `course` (
   `id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(128) DEFAULT NULL,
