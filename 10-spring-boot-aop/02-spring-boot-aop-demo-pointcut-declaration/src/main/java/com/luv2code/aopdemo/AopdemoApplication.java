@@ -28,12 +28,19 @@ public class AopdemoApplication {
 
 		theAccountDAO.doWork();
 
+		// call the account getter and setter methods
+		theAccountDAO.setName("fool");
+		theAccountDAO.setServiceCode("silver");
+
+		String name = theAccountDAO.getName();
+		String code = theAccountDAO.getServiceCode();
+
 //		theMembershipDAO.addAccount();
 
-		theMembershipDAO.addSillyMember();
+//		theMembershipDAO.addSillyMember();
 
 //		System.out.println("Again! ");
-//
+
 //		theAccountDAO.addAccount();
 
 	}
