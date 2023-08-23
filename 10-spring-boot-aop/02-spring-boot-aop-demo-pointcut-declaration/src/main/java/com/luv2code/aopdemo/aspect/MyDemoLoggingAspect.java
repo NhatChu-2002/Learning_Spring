@@ -1,12 +1,17 @@
 package com.luv2code.aopdemo.aspect;
 
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import com.luv2code.aopdemo.Account;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Aspect
 @Component
+@Order(2)
 public class MyDemoLoggingAspect {
 
 //    @Before("execution(public void addAccount())")
@@ -20,33 +25,49 @@ public class MyDemoLoggingAspect {
 //    @Before("execution(* add*(com.luv2code.aopdemo.Account,..))")
 
 //    @Before("execution(* com.luv2code.aopdemo.dao.*.*(..))")
-    @Pointcut("execution(* com.luv2code.aopdemo.dao.*.*(..))")
-    private void forDaoPackage()
-    {
 
-    }
-    //create pointcut for getter methods4
-    @Pointcut("execution(* com.luv2code.aopdemo.dao.*.get*(..))")
-    private void getter() {}
-
-    //create pointcut for setter methods
-    @Pointcut("execution(* com.luv2code.aopdemo.dao.*.set*(..))")
-    private void setter() {}
-    //create pointcut: include package exclude getter/setter
-    @Pointcut("forDaoPackage() && !(getter() || setter())")
-    private void forDaoPackageNoGetterSetter()
+    // add a new advice for AfterReturning on findAccounts method
+    @AfterReturning(
+            pointcut = "execution(* com.luv2code.aopdemo.dao.AccountDAO.findAccounts(..))",
+            returning = "result"
+    )
+    public void afterReturningFindAccountsAdvice(JoinPoint theJointPoint, List<Account> result)
     {
+        String method = theJointPoint.getSignature().toShortString();
+        System.out.println("\n====>>>> Executing @AfterReturning on method: " + method);
+        System.out.println("\n====>>>> result: " + result);
 
     }
 
-    @Before("forDaoPackageNoGetterSetter()")
-    public void addAccountBeforeAdvice()
-    {
-        System.out.println("\n=======>>>>> executing @Before advice on addAccount()");
+    @Before("com.luv2code.aopdemo.aspect.AopExpressions.forDaoPackageNoGetterSetter()")
+    public void addAccountBeforeAdvice(JoinPoint theJointPoint) {
+        System.out.println("\n=======>>>>> Executing @Before advice on addAccount()");
+
+        //display the method signature
+        MethodSignature methodSig = (MethodSignature) theJointPoint.getSignature();
+
+        System.out.println("Method: " + methodSig);
+
+        //display the method argument
+
+        //get args
+        Object[] args = theJointPoint.getArgs();
+        //loop thru args
+        for(Object tempArg: args)
+        {
+            System.out.println(tempArg);
+            if(tempArg instanceof Account)
+            {
+                Account theAccount = (Account) tempArg;
+
+                System.out.println("Account name: " + theAccount.getName());
+                System.out.println("Account level: " + theAccount.getLevel());
+
+            }
+        }
+
     }
-    @Before("forDaoPackageNoGetterSetter()")
-    public void performApiAnalytics()
-    {
-        System.out.println("\n=======>>>>> perform api analytics");
-    }
+
+
+
 }
