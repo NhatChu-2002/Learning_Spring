@@ -25,6 +25,17 @@ public class MyDemoLoggingAspect {
 //    @Before("execution(* add*(com.luv2code.aopdemo.Account,..))")
 
 //    @Before("execution(* com.luv2code.aopdemo.dao.*.*(..))")
+    @AfterThrowing(
+            pointcut = "execution(* com.luv2code.aopdemo.dao.AccountDAO.findAccounts(..))",
+            throwing = "theExc"
+    )
+    public void afterThrowingFindAccountsService(JoinPoint theJointPoint,Throwable theExc)
+    {
+        String method = theJointPoint.getSignature().toShortString();
+        System.out.println("\n====>>>> Executing @AfterThrowing on method: " + method);
+
+        System.out.println("\n====>>>> theExc is: " + theExc);
+    }
 
     // add a new advice for AfterReturning on findAccounts method
     @AfterReturning(
@@ -36,6 +47,25 @@ public class MyDemoLoggingAspect {
         String method = theJointPoint.getSignature().toShortString();
         System.out.println("\n====>>>> Executing @AfterReturning on method: " + method);
         System.out.println("\n====>>>> result: " + result);
+
+        // modify return data
+
+        //convert the account name to uppercase
+        convertAccountNameToUppercase(result);
+        System.out.println("\n====>>>> result: " + result);
+    }
+
+    private void convertAccountNameToUppercase(List<Account> result) {
+        // loop thru accounts
+        for(Account tempAccount: result)
+        {
+            //get uppercase version of name
+            String theUpperName= tempAccount.getName().toUpperCase();
+
+            //update the name on account
+            tempAccount.setName(theUpperName);
+        }
+
 
     }
 
