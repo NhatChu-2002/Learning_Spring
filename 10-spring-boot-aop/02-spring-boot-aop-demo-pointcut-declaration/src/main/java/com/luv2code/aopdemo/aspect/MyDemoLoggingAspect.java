@@ -2,6 +2,7 @@ package com.luv2code.aopdemo.aspect;
 
 import com.luv2code.aopdemo.Account;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.Order;
@@ -25,13 +26,54 @@ public class MyDemoLoggingAspect {
 //    @Before("execution(* add*(com.luv2code.aopdemo.Account,..))")
 
 //    @Before("execution(* com.luv2code.aopdemo.dao.*.*(..))")
+
+    @Around("execution(* com.luv2code.aopdemo.service.*.getFortune(..))")
+    public Object aroundGetFortune(
+            ProceedingJoinPoint theProceedingJoinPoint) throws Throwable
+    {
+        String method = theProceedingJoinPoint.getSignature().toShortString();
+        System.out.println("\n====>>>> Executing @Around on method: " + method);
+
+        //get the begin timestamp
+        long begin = System.currentTimeMillis();
+
+        //execute the given method
+        Object result = null;
+        try{
+            theProceedingJoinPoint.proceed();
+        }
+        catch(Exception exc)
+        {
+            System.out.println(exc.getMessage());
+
+//            result = "Major Accident! But no worries, your private AOP helicopter is on the way";
+            //rethrow exception
+            throw exc;
+        }
+
+
+        // get the end timestamp
+        long end = System.currentTimeMillis();
+
+        //compute duration and display it
+        long duration = end - begin;
+        System.out.println("\n=======> Duration: " + duration/1000.0 + " seconds");
+
+        return result;
+    }
+    @After("execution(* com.luv2code.aopdemo.dao.AccountDAO.findAccounts(..))")
+    public void afterFinallyFindAccountsAdvice(JoinPoint theJoinPoint)
+    {
+        String method = theJoinPoint.getSignature().toShortString();
+        System.out.println("\n====>>>> Executing @After on method: " + method);
+    }
     @AfterThrowing(
             pointcut = "execution(* com.luv2code.aopdemo.dao.AccountDAO.findAccounts(..))",
             throwing = "theExc"
     )
-    public void afterThrowingFindAccountsService(JoinPoint theJointPoint,Throwable theExc)
+    public void afterThrowingFindAccountsService(JoinPoint theJoinPoint,Throwable theExc)
     {
-        String method = theJointPoint.getSignature().toShortString();
+        String method = theJoinPoint.getSignature().toShortString();
         System.out.println("\n====>>>> Executing @AfterThrowing on method: " + method);
 
         System.out.println("\n====>>>> theExc is: " + theExc);
